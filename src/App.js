@@ -1,5 +1,13 @@
 import React from "react";
+import Message from "./Components/Message/Message";
+import DisplayMsg from "./Components/DisplayMsg/DisplayMsg";
+import Input from "./Components/Input/Input";
+
 import "bootstrap/dist/css/bootstrap.css";
+import * as Scroll from "react-scroll";
+import FadeIn from "react-fade-in";
+import bart from "./images/bart.png";
+import homer from "./images/homer.png";
 
 import "./App.css";
 
@@ -7,101 +15,83 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: "",
-      message: "",
       blockMessage: "",
-      isCliked: false
+      isCliked: false,
+      isWriting: false,
+      name: ""
     };
     this.allMessages = [];
   }
 
-  handleOnChangeName = e => {
-    this.setState({
-      name: e.target.value
-    });
+  handleOnScroll = smooth => {
+    let scroll = Scroll.animateScroll;
+    scroll.scrollToBottom(smooth);
   };
 
-  handleOnChangeMessage = e => {
-    this.setState({
-      message: e.target.value
-    });
-  };
-
-  handleOnClick = () => {
+  handleOnClick = (name, message) => {
     const blockMessage = (
       <>
-        <div className="card my-2 border-0 shadow">
-          <div
-            className={
+        <FadeIn>
+          <Message
+            src={this.state.isCliked ? homer : bart}
+            classNameImg={!this.state.isCliked ? "left m-1" : "right m-1"}
+            classNameCardBody={
               this.state.isCliked
                 ? "card-body text-right"
                 : "card-body text-left"
             }
-          >
-            <h5
-              className={
-                this.state.isCliked
-                  ? "card-title text-warning"
-                  : "card-title text-success"
-              }
-            >
-              Message from : {this.state.name}
-            </h5>
-            <p className="card-text">{this.state.message}</p>
-          </div>
-        </div>
+            classNameCardTitle={
+              this.state.isCliked
+                ? "card-title text-warning"
+                : "card-title text-success"
+            }
+            name={name}
+            message={message}
+          />
+        </FadeIn>
       </>
     );
     this.allMessages.push(blockMessage);
 
     this.setState({
       blockMessage: this.allMessages,
-      isCliked: !this.state.isCliked
+      isCliked: !this.state.isCliked,
+      isWriting: false
     });
+  };
+
+  handleMessage = (isWriting, name) => {
+    this.setState({
+      isWriting: isWriting,
+      name: name
+    });
+  };
+
+  handleOnClickAndScroll = (name, message) => {
+    this.handleOnClick(name, message);
+    this.handleOnScroll();
   };
 
   render() {
     return (
       <>
-        <header className="container header-wrapper border rounded my-3 col-8 mx-auto">
-          <div className="row">
-            <h2 className="text-center col-12">TchatBox</h2>
-            <div className="col-12">{this.state.blockMessage}</div>
-          </div>
-        </header>
-        <main className="container col-8 mx-auto">
-          <div className="row">
-            <div className="col-12">
-              <div className="input-group flex-nowrap">
-                <input
-                  onChange={this.handleOnChangeName}
-                  type="text"
-                  className="form-control"
-                  placeholder="Name"
-                  aria-label="Name"
-                  aria-describedby="addon-wrapping"
-                ></input>
-                <input
-                  onChange={this.handleOnChangeMessage}
-                  type="text"
-                  className="form-control"
-                  placeholder="Message"
-                  aria-label="Message"
-                  aria-describedby="addon-wrapping"
-                ></input>
-                <div class="input-group-prepend">
-                  <button
-                    onClick={this.handleOnClick}
-                    type="button"
-                    className="btn btn-success"
-                  >
-                    Send
-                  </button>
+        <DisplayMsg blockMessage={this.state.blockMessage}>
+          {this.state.isWriting && (
+            <FadeIn>
+              <div className="card my-2 border-0 shadow pending">
+                <div className="card-body text-left">
+                  <p className="card-text">
+                    <em>{this.state.name} is typing ... </em>
+                  </p>
                 </div>
               </div>
-            </div>
-          </div>
-        </main>
+            </FadeIn>
+          )}
+        </DisplayMsg>
+        <Input
+          handleOnClickAndScroll={this.handleOnClickAndScroll}
+          handleMessage={this.handleMessage}
+        />
       </>
     );
   }

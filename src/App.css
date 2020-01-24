@@ -1,4 +1,33 @@
-.header-wrapper {
-  min-height: 60vh;
+.pending {
+  animation: MoveUpDown 1s linear infinite;
+}
 
+@keyframes MoveUpDown {
+  0%,
+  100% {
+    bottom: 0;
+  }
+  50% {
+    bottom: 8px;
+  }
+}
+
+.left {
+  width: 50px;
+  height: auto;
+  position: relative;
+  left: 0.5vw;
+  object-fit: cover;
+}
+
+.right {
+  width: 50px;
+  height: auto;
+  position: relative;
+  left: 59vw;
+  object-fit: cover;
+}
+
+main {
+  background-color: #FFC107;
 }
