@@ -68,8 +68,8 @@ class App extends React.Component {
   };
 
   handleOnClickAndScroll = (name, message) => {
-    this.handleOnClick(name, message);
     this.handleOnScroll();
+    this.handleOnClick(name, message);
   };
 
   render() {
